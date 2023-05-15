@@ -26,7 +26,7 @@ model_clip, preprocess = clip.load("ViT-B/32", device=device)
 # video_path = data_dir / "apple_test.mp4"
 video_path = Path("eval_videos")
 
-def process_video(code: str, category: str, i: int):
+def process_video(code, category, i):
     n_vid_path = 'www.youtube.com/watch?v=' + code
     yt=YouTube(n_vid_path,on_progress_callback=on_progress)
     videos=yt.streams.filter(file_extension = "mp4").first()
@@ -108,13 +108,13 @@ def get_frame_indicies(image_vectors, s: list, a:str, frames:int):
     
     return indicies, z
 
-def display_frame(index: list):
+# def display_frame(index: list):
     
-    for i in index:
-        # cap.set(cv2.CAP_PROP_POS_FRAMES, i)
-        # ret, frame = cap.read()
-        m = Image.fromarray(frame_array[i])
-        m.show()
+#     for i in index:
+#         # cap.set(cv2.CAP_PROP_POS_FRAMES, i)
+#         # ret, frame = cap.read()
+#         m = Image.fromarray(frame_array[i])
+#         m.show()
 
 
 
