@@ -1,0 +1,12 @@
+Tie Results
+
+video 4 action:1
+video 4 state:0
+video 4 action:1
+video 4 state:0.5
+video 4 action:0
+video 4 state:0
+video 4 action:1
+video 4 state:0.5
+tie state:0.25
+tie action:0.75

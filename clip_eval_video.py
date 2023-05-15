@@ -26,10 +26,17 @@ model_clip, preprocess = clip.load("ViT-B/32", device=device)
 # video_path = data_dir / "apple_test.mp4"
 video_path = Path("eval_videos")
 
+class AgeRestrictedError(Exception):
+    pass
+
 def process_video(code, category, i):
+    print(code)
     n_vid_path = 'www.youtube.com/watch?v=' + code
     yt=YouTube(n_vid_path,on_progress_callback=on_progress)
-    videos=yt.streams.filter(file_extension = "mp4").first()
+    try:
+        videos=yt.streams.filter(file_extension = "mp4").first()
+    except AgeRestrictedError:
+        return None
     filename = category + str(i) + ".mp4"
     videos.download(output_path=video_path, filename=filename)
     p = video_path / filename
@@ -43,8 +50,12 @@ def process_video(code, category, i):
     n = 0
     i = 0
     frame_array = []
+    # cap = cv2.VideoCapture(0)
     while True:
         ret, frame = cap.read()
+        # ret, frame = cap.read()
+        if not ret:
+            break
         if n%fps == 0:
             frame_array.append(frame)
             with torch.no_grad():
@@ -132,10 +143,16 @@ def eval_one_clip(d, indices):
         state_score += 0.5
     if d[indices[1]] == 2:
         action_score += 1
-    if d[indices[2]] == 3:
-        state_score += 0.5
+    print(indices)
+    
+    if indices[2] in d:
+        if d[indices[2]]== 3:
+            state_score += 0.5
+    
     return action_score, state_score
 
+class BreakLoopException(Exception):
+    pass
 
 def evaluation():
     #WRITE RESULTS TO TEXT FILE
@@ -147,58 +164,89 @@ def evaluation():
     #WRITE RESULTS TO TEXT FILE
     #WRITE RESULTS TO TEXT FILE
     #WRITE RESULTS TO TEXT FILE
-    action_vec = []
-    state_vec = []
-    for categories in cat_dicts:
+        
+    # for categories in cat_dicts:
+        action_vec = []
+        state_vec = []
         action_correct = 0
         state_correct =  0
-        state_descriptions = q[categories]["states"]
-        action_descriptions = q[categories]["action"]
-
-
+        state_descriptions = q["tea"]["states"]
+        action_descriptions = q["tea"]["action"]
         w = 0
         a_total = 0
         s_total = 0
-        for videos in categories:
+        for videos in cat_dicts["tea"]:
             a_total += 1
             s_total += 1
             video_name = videos[0]
             video_annotation = videos[1]
-            image_vec, frame_count = process_video(video_name, categories, w)
-            increasing_sets = increasing_sets(frame_count)
-            z_list =[]
-            indices_list = []
-            for des in a[categories]:
+            try:
+                z = process_video(video_name, "tea", w)
+
+                if z == None:
+                    continue
+                else:
+                    image_vec, frame_count = z
+            except BreakLoopException:
+                # break_flag = True
+                continue
+            # increasing_sets = increasing_sets(frame_count)
+            z_max = 0
+            true_inices = ()
+            for des in a["tea"]:
                 indices, z = get_frame_indicies(image_vec, s=state_descriptions[des[0]], a=action_descriptions[des[1]], frames=frame_count)
-                z_list.append(z)
-                indices_list.append(indices)
+                # z_list.append(z)
+                # indices_list.append(indices)
+                if z > z_max:
+                    z_max = z
+                    true_inices = indices
+                    
+
             
-            true_inices = indices_list[np.argmax(np.array(z_list))]
+            
             action_score, state_score = eval_one_clip(video_annotation, true_inices)
             action_correct += action_score
             state_correct += state_score
+            print("video " + str(w) + " action:" + str(action_score))
+            print("video " + str(w) + " state:" + str(state_score))
+            action_vec.append(action_score)
+            state_vec.append(state_score)
+            # with open('results.txt', 'w') as f:
+                
+            #     f.write("video " + str(w) + " action:" + str(action_score))
+            #     f.write('\n')
+                
+            #     f.write("video " + str(w) + " state:" + str(state_score))
+            #     f.write('\n')
+            w += 1
+        
 
         
         
         category_action_precision = action_correct/ a_total
-        action_vec.append(category_action_precision)
+        # action_vec.append(category_action_precision)
         category_state_precision = state_correct/ s_total
-        state_vec.append(category_state_precision)
+        # state_vec.append(category_state_precision)
 
         with open('results.txt', 'w') as f:
-            f.write(categories + "state:" + str(category_state_precision))
+            for ac, ss in zip(action_vec, state_vec):
+                f.write("video " + str(w) + " action:" + str(ac) + "\n")
+                f.write("video " + str(w) + " state:" + str(ss) + "\n")
+                
+
+            f.write("tea state:" + str(category_state_precision))
             f.write('\n')
-            f.write(categories + "action:" + str(category_action_precision))
+            f.write("tea action:" + str(category_action_precision))
             f.write('\n')
 
     
-    total_action_precision = np.mean(np.array(action_vec))
-    total_state_precision = np.mean(np.array(state_vec))
+    # total_action_precision = np.mean(np.array(action_vec))
+    # total_state_precision = np.mean(np.array(state_vec))
 
-    with open('results.txt', 'w') as f:
-            f.write(categories + "state:" + str(total_action_precision))
-            f.write('\n')
-            f.write(categories + "action:" + str(total_state_precision))
+    # with open('results.txt', 'w') as f:
+    #         f.write(categories + "state:" + str(total_action_precision))
+    #         f.write('\n')
+    #         f.write(categories + "action:" + str(total_state_precision))
 
             
 

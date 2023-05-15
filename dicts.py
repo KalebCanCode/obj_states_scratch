@@ -33,18 +33,18 @@ for filename in os.listdir(directory):
             ff = os.path.join(directory, r)
     i+=1
 
-for categories in cat_dicts:
-        state_descriptions = q[categories]["states"]
-        action_descriptions = q[categories]["action"]
-        w = 0
-        print(state_descriptions)
-        print(action_descriptions)
-        for i in a[categories]:
-             print(i)
+# for categories in cat_dicts:
+#         state_descriptions = q[categories]["states"]
+#         action_descriptions = q[categories]["action"]
+#         w = 0
+#         print(state_descriptions)
+#         print(action_descriptions)
+#         for i in a[categories]:
+#              print(i)
              
-             r = state_descriptions[i[0]] 
-             e = action_descriptions[i[1]]
-        w+= 1
+#              r = state_descriptions[i[0]] 
+#              e = action_descriptions[i[1]]
+#         w+= 1
         
 
     

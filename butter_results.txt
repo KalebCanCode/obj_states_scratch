@@ -1,0 +1,14 @@
+Butter Results
+
+video 0 action:0
+video 0 state:0.5
+video 1 action:1
+video 1 state:0.5
+video 2 action:1
+video 2 state:0
+video 3 action:1
+video 3 state:0.5
+video 4 action:0
+video 4 state:0.5
+butter state:0.4
+butter action:0.6
