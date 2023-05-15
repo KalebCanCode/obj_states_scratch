@@ -68,7 +68,7 @@ shoe_label = ["a photo of a shoe that is not tied", "a photo of tying a shoe", "
 avocad_label = ["half watermelon", "cutting a watermelon", "sliced watermelon"]
 
 
-def increasing_sets(frames: int):
+def increasing_sets(frames):
     # Generate all possible combinations of size 3 of increasing indices from 0 to 24
     index_combinations = itertools.combinations(range(frames), 3)
     increasing_sets = []
@@ -82,7 +82,7 @@ def increasing_sets(frames: int):
     return increasing_sets
 
 
-def get_frame_indicies(image_vectors, s: list, a:str, frames:int):
+def get_frame_indicies(image_vectors, s, a, frames):
     indicies = ()
     label = 0
     orderings = increasing_sets(frames)
@@ -125,7 +125,7 @@ def get_frame_indicies(image_vectors, s: list, a:str, frames:int):
 
 # display_frame(indices)
 
-def eval_one_clip(d: dict, indices: tuple):
+def eval_one_clip(d, indices):
     action_score = 0
     state_score = 0
     if d[indices[0]] == 1:
