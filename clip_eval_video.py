@@ -170,18 +170,18 @@ def evaluation():
         state_vec = []
         action_correct = 0
         state_correct =  0
-        state_descriptions = q["tea"]["states"]
-        action_descriptions = q["tea"]["action"]
+        state_descriptions = q["apple"]["states"]
+        action_descriptions = q["apple"]["action"]
         w = 0
         a_total = 0
         s_total = 0
-        for videos in cat_dicts["tea"]:
+        for videos in cat_dicts["apple"]:
             a_total += 1
             s_total += 1
             video_name = videos[0]
             video_annotation = videos[1]
             try:
-                z = process_video(video_name, "tea", w)
+                z = process_video(video_name, "apple", w)
 
                 if z == None:
                     continue
@@ -193,7 +193,7 @@ def evaluation():
             # increasing_sets = increasing_sets(frame_count)
             z_max = 0
             true_inices = ()
-            for des in a["tea"]:
+            for des in a["apple"]:
                 indices, z = get_frame_indicies(image_vec, s=state_descriptions[des[0]], a=action_descriptions[des[1]], frames=frame_count)
                 # z_list.append(z)
                 # indices_list.append(indices)
@@ -229,14 +229,16 @@ def evaluation():
         # state_vec.append(category_state_precision)
 
         with open('results.txt', 'w') as f:
+            l = 0
             for ac, ss in zip(action_vec, state_vec):
-                f.write("video " + str(w) + " action:" + str(ac) + "\n")
-                f.write("video " + str(w) + " state:" + str(ss) + "\n")
+                f.write("video " + str(l) + " action:" + str(ac) + "\n")
+                f.write("video " + str(l) + " state:" + str(ss) + "\n")
+                l +=1
                 
 
-            f.write("tea state:" + str(category_state_precision))
+            f.write("apple state:" + str(category_state_precision))
             f.write('\n')
-            f.write("tea action:" + str(category_action_precision))
+            f.write("apple action:" + str(category_action_precision))
             f.write('\n')
 
     
