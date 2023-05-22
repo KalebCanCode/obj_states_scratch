@@ -26,7 +26,7 @@ video_path = Path("eval_videos")
 class AgeRestrictedError(Exception):
     pass
 
-def process_video(code, category, i):
+def process_video(code, category, i, ret_fa=False):
     print(code)
     n_vid_path = 'www.youtube.com/watch?v=' + code
     yt=YouTube(n_vid_path,on_progress_callback=on_progress)
@@ -67,7 +67,10 @@ def process_video(code, category, i):
     cap.release()
     cv2.destroyAllWindows()
 
-    return image_vectors, frame_count
+    if ret_fa:
+        return image_vectors, frame_count, frame_array
+    else:
+        return image_vectors, frame_count
 
 
 #For now use a deterministic list for apple cutting video 
@@ -191,21 +194,35 @@ def visualize_indices(video_name, category):
     state_descriptions = q[category]["states"]
     action_descriptions = q[category]["action"]
     w = 0
-    z = process_video(video_name, category, w)
-    image_vec, frame_count = z
-
+    z = process_video(video_name, category, w, True)
+    image_vec, frame_count, frame_array = z
     y_max = 0
-    t_inices = ()
+    true_indices = ()
+    worst_indices = ()
     for des in a["tile"]:
-        indices, y = contrained_get_indices(image_vec, s=state_descriptions[des[0]], a=action_descriptions[des[1]], ret_best_worst=True)
+        b_indices, y, w_indices, p = contrained_get_indices(image_vec, s=state_descriptions[des[0]], a=action_descriptions[des[1]], ret_best_worst=True)
         # z_list.append(z)
         # indices_list.append(indices)
         if y > y_max:
             y_max = y
-            t_inices = indices
+            true_indices = b_indices
+        if p < p_min:
+            p_min = p
+            worst_indices = w_indices
 
 
-    return None
+    for i in true_indices:
+        # cap.set(cv2.CAP_PROP_POS_FRAMES, i)
+        # ret, frame = cap.read()
+        m = Image.fromarray(frame_array[i])
+        m.show()
+    
+    for i in worst_indices:
+        # cap.set(cv2.CAP_PROP_POS_FRAMES, i)
+        # ret, frame = cap.read()
+        m = Image.fromarray(frame_array[i])
+        m.show()
+
 
 
 def evaluation():
@@ -215,18 +232,18 @@ def evaluation():
         state_vec = []
         action_correct = 0
         state_correct =  0
-        state_descriptions = q["tea"]["states"]
-        action_descriptions = q["tea"]["action"]
+        state_descriptions = q["grill"]["states"]
+        action_descriptions = q["grill"]["action"]
         w = 0
         a_total = 0
         s_total = 0
-        for videos in cat_dicts["tea"]:
+        for videos in cat_dicts["grill"]:
             a_total += 1
             s_total += 1
             video_name = videos[0]
             video_annotation = videos[1]
             try:
-                z = process_video(video_name, "tea", w)
+                z = process_video(video_name, "grill", w)
 
                 if z == None:
                     continue
@@ -238,10 +255,9 @@ def evaluation():
             # increasing_sets = increasing_sets(frame_count)
             z_max = 0
             true_inices = ()
-            for des in a["tea"]:
+            for des in a["juice"]:
                 indices, z = contrained_get_indices(image_vec, s=state_descriptions[des[0]], a=action_descriptions[des[1]])
-                # z_list.append(z)
-                # indices_list.append(indices)
+
                 if z > z_max:
                     z_max = z
                     true_inices = indices
@@ -271,9 +287,9 @@ def evaluation():
                 l +=1
                 
 
-            f.write("tea state:" + str(category_state_precision))
+            f.write("grill state:" + str(category_state_precision))
             f.write('\n')
-            f.write("tea action:" + str(category_action_precision))
+            f.write("grill action:" + str(category_action_precision))
             f.write('\n')
 
 
