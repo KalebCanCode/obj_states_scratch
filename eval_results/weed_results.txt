@@ -1,0 +1,26 @@
+Weed Results
+
+video 0 action:1
+video 0 state:0
+video 1 action:0
+video 1 state:0.5
+video 2 action:0
+video 2 state:0.5
+video 3 action:1
+video 3 state:1.0
+video 4 action:0
+video 4 state:0
+video 5 action:0
+video 5 state:0.5
+video 6 action:1
+video 6 state:0
+video 7 action:1
+video 7 state:0.5
+video 8 action:1
+video 8 state:0
+video 9 action:0
+video 9 state:0
+video 10 action:1
+video 10 state:1.0
+weed state:0.36363636363636365
+weed action:0.5454545454545454

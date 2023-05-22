@@ -1,9 +1,7 @@
 from pathlib import Path
-
 import clip
 import cv2
 import matplotlib.pyplot as plt
-
 import torch
 from PIL import Image
 from tqdm import tqdm
@@ -12,7 +10,6 @@ import IPython
 from queries import q, a
 from dicts import cat_dicts, video_list
 import numpy as np
-
 from pytube import YouTube
 from pytube.cli import on_progress
 
@@ -93,6 +90,7 @@ def increasing_sets(frames):
     return increasing_sets
 
 
+
 def get_frame_indicies(image_vectors, s, a, frames):
     indicies = ()
     label = 0
@@ -170,18 +168,18 @@ def evaluation():
         state_vec = []
         action_correct = 0
         state_correct =  0
-        state_descriptions = q["apple"]["states"]
-        action_descriptions = q["apple"]["action"]
+        state_descriptions = q["weed"]["states"]
+        action_descriptions = q["weed"]["action"]
         w = 0
         a_total = 0
         s_total = 0
-        for videos in cat_dicts["apple"]:
+        for videos in cat_dicts["weed"]:
             a_total += 1
             s_total += 1
             video_name = videos[0]
             video_annotation = videos[1]
             try:
-                z = process_video(video_name, "apple", w)
+                z = process_video(video_name, "weed", w)
 
                 if z == None:
                     continue
@@ -193,7 +191,7 @@ def evaluation():
             # increasing_sets = increasing_sets(frame_count)
             z_max = 0
             true_inices = ()
-            for des in a["apple"]:
+            for des in a["weed"]:
                 indices, z = get_frame_indicies(image_vec, s=state_descriptions[des[0]], a=action_descriptions[des[1]], frames=frame_count)
                 # z_list.append(z)
                 # indices_list.append(indices)
@@ -236,9 +234,9 @@ def evaluation():
                 l +=1
                 
 
-            f.write("apple state:" + str(category_state_precision))
+            f.write("weed state:" + str(category_state_precision))
             f.write('\n')
-            f.write("apple action:" + str(category_action_precision))
+            f.write("weed action:" + str(category_action_precision))
             f.write('\n')
 
     
