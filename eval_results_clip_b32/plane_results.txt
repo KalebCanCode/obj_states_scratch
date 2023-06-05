@@ -1,0 +1,54 @@
+Plane Results
+
+video 0 action:1
+video 0 state:0
+video 1 action:1
+video 1 state:0
+video 2 action:0
+video 2 state:0
+video 3 action:1
+video 3 state:0
+video 4 action:1
+video 4 state:0
+video 5 action:1
+video 5 state:0
+video 6 action:0
+video 6 state:0
+video 7 action:1
+video 7 state:0.5
+video 8 action:1
+video 8 state:1.0
+video 9 action:1
+video 9 state:0.5
+video 10 action:1
+video 10 state:0
+video 11 action:1
+video 11 state:0
+video 12 action:1
+video 12 state:0
+video 13 action:1
+video 13 state:0
+video 14 action:1
+video 14 state:0.5
+video 15 action:1
+video 15 state:0.5
+video 16 action:1
+video 16 state:0
+video 17 action:0
+video 17 state:0.5
+video 18 action:1
+video 18 state:0
+video 19 action:1
+video 19 state:0.5
+video 20 action:1
+video 20 state:0.5
+video 21 action:1
+video 21 state:0.5
+video 22 action:1
+video 22 state:0
+video 23 action:0
+video 23 state:0.5
+video 24 action:1
+video 24 state:0
+plane state:0.22
+plane action:0.84

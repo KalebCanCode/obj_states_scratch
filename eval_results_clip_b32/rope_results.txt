@@ -1,0 +1,26 @@
+Rope Results
+
+video 0 action:1
+video 0 state:0
+video 1 action:1
+video 1 state:0
+video 2 action:0
+video 2 state:0
+video 3 action:1
+video 3 state:0
+video 4 action:0
+video 4 state:0.5
+video 5 action:0
+video 5 state:0
+video 6 action:0
+video 6 state:0.5
+video 7 action:0
+video 7 state:0.5
+video 8 action:0
+video 8 state:0
+video 9 action:1
+video 9 state:0.5
+video 10 action:0
+video 10 state:0
+rope state:0.18181818181818182
+rope action:0.36363636363636365

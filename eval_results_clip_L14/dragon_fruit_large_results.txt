@@ -1,0 +1,36 @@
+video 0 action:0
+video 0 state:0
+video 1 action:1
+video 1 state:0
+video 2 action:1
+video 2 state:1.0
+video 3 action:1
+video 3 state:0
+video 4 action:1
+video 4 state:0
+video 5 action:1
+video 5 state:0.5
+video 6 action:0
+video 6 state:0.5
+video 7 action:1
+video 7 state:0.5
+video 8 action:1
+video 8 state:0
+video 9 action:1
+video 9 state:0
+video 10 action:1
+video 10 state:0
+video 11 action:1
+video 11 state:0.5
+video 12 action:1
+video 12 state:0
+video 13 action:1
+video 13 state:0.5
+video 14 action:1
+video 14 state:0
+video 15 action:1
+video 15 state:0
+video 16 action:1
+video 16 state:0.5
+dragon_fruit state:0.23529411764705882
+dragon_fruit action:0.8823529411764706

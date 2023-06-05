@@ -1,0 +1,20 @@
+video 0 action:1
+video 0 state:0.5
+video 1 action:1
+video 1 state:0.5
+video 2 action:1
+video 2 state:0
+video 3 action:1
+video 3 state:0.5
+video 4 action:0
+video 4 state:0
+video 5 action:1
+video 5 state:0
+video 6 action:1
+video 6 state:0.5
+video 7 action:1
+video 7 state:0
+video 8 action:1
+video 8 state:0
+garlic state:0.2222222222222222
+garlic action:0.8888888888888888

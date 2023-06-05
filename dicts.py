@@ -45,6 +45,7 @@ for filename in os.listdir(directory):
 #              r = state_descriptions[i[0]] 
 #              e = action_descriptions[i[1]]
 #         w+= 1
+# print(cat_dicts)
         
 
     

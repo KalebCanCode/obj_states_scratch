@@ -1,0 +1,18 @@
+video 0 action:0
+video 0 state:0.5
+video 1 action:1
+video 1 state:1.0
+video 2 action:0
+video 2 state:0
+video 3 action:1
+video 3 state:0.5
+video 4 action:0
+video 4 state:1.0
+video 5 action:1
+video 5 state:0
+video 6 action:0
+video 6 state:0
+video 7 action:0
+video 7 state:0
+cherries state:0.375
+cherries action:0.375

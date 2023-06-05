@@ -16,12 +16,15 @@ from pytube.cli import on_progress
 # from IPython.display import display, Image
 
 # data_dir = Path("uncut_vids")
+# device = "mps" if torch.backends.mps.is_available() else "cpu"
 device = "cuda" if torch.cuda.is_available() else "cpu"
-model_clip, preprocess = clip.load("ViT-B/32", device=device) 
+# device = "cpu"
+model_clip, preprocess = clip.load("ViT-L/14", device=device) 
+# model_clip, preprocess = clip.load("ViT-B/32", device=device) 
 
 # video_path = data_dir / 'Art In Apple Flower _ Fruit Carving Garnish _ Apple Art _ Party Garnishing-4__D0XdFT9Q.mp4'
 # video_path = data_dir / "apple_test.mp4"
-video_path = Path("eval_videos")
+video_path = Path("eval_vids")
 
 class AgeRestrictedError(Exception):
     pass
@@ -43,7 +46,8 @@ def process_video(code, category, i, ret_fa=False):
     fps = int(cap.get(cv2.CAP_PROP_FPS))
     seconds = round(frame_count / fps)
     frame_count = seconds
-    image_vectors = torch.zeros((frame_count + 1, 512), device=device)
+    image_vectors = torch.zeros((frame_count + 1, 768), device=device)
+    # image_vectors = torch.zeros((frame_count + 1, 512), device=device)
     n = 0
     i = 0
     frame_array = []
@@ -54,15 +58,17 @@ def process_video(code, category, i, ret_fa=False):
         if not ret:
             break
         if n%fps == 0:
+            # print(frame)
             frame_array.append(frame)
             with torch.no_grad():
                 image_vectors[i] = model_clip.encode_image(
                     preprocess(Image.fromarray(frame)).unsqueeze(0).to(device)
                 )
+                # print(image_vectors[i])
                 i+=1
         n+=1
         if ret == False:
-            break;
+            break
 
     cap.release()
     cv2.destroyAllWindows()
@@ -72,11 +78,6 @@ def process_video(code, category, i, ret_fa=False):
     else:
         return image_vectors, frame_count
 
-
-#For now use a deterministic list for apple cutting video 
-states_and_action_apple = ["an apple", "cutting of an apple", "pieces of an apple"]
-shoe_label = ["a photo of a shoe that is not tied", "a photo of tying a shoe", "a photo of a finish tied shoe"]
-avocad_label = ["half watermelon", "cutting a watermelon", "sliced watermelon"]
 
 
 def increasing_sets(frames):
@@ -99,8 +100,10 @@ def constrained_argmax(pred_action, pred_state_init, pred_state_term, ret_best_w
     for i in range(len(pred_state_init)):
         for j in range(i + 2, len(pred_state_term)):
             val_ = pred_state_init[i] * pred_state_term[j]
+            
             k = torch.argmax(pred_action[i + 1:j]).item()
             val_ *= pred_action[i + 1 + k]
+            # print(i, i + 1 + k, j, val_)
             if val_ > max_val_:
                 best_idx_ = i, i + 1 + k, j
                 max_val_ = val_
@@ -116,8 +119,11 @@ def constrained_argmax(pred_action, pred_state_init, pred_state_term, ret_best_w
 
 def contrained_get_indices(image_vectors, s, a, ret_best_worst=False):
     s1_vector = model_clip.encode_text(clip.tokenize([s[0]]).to(device))
+    
     a_vector = model_clip.encode_text(clip.tokenize([a]).to(device))
+    
     s2_vector = model_clip.encode_text(clip.tokenize([s[1]]).to(device))
+    # print(image_vectors)
 
     sim_s1 = torch.cosine_similarity(image_vectors, s1_vector)
     sim_a = torch.cosine_similarity(image_vectors, a_vector)
@@ -164,22 +170,17 @@ def get_frame_indicies(image_vectors, s, a, frames):
 #         m.show()
 
 
-
-
-
-# indices = get_frame_indicies(states_and_action_apple  , frame_count)
-# print(indices)
-
-# display_frame(indices)
-
 def eval_one_clip(d, indices):
+    print(indices)
+
     action_score = 0
     state_score = 0
     if d[indices[0]] == 1:
         state_score += 0.5
-    if d[indices[1]] == 2:
-        action_score += 1
-    print(indices)
+    if indices[1] in d:
+        if d[indices[1]] == 2:
+            action_score += 1
+    
     
     if indices[2] in d:
         if d[indices[2]]== 3:
@@ -197,6 +198,7 @@ def visualize_indices(video_name, category):
     z = process_video(video_name, category, w, True)
     image_vec, frame_count, frame_array = z
     y_max = 0
+    p_min = float('inf')
     true_indices = ()
     worst_indices = ()
     for des in a["tile"]:
@@ -225,41 +227,45 @@ def visualize_indices(video_name, category):
 
 
 
-def evaluation():
+def evaluation(class_word, file):
         
     # for categories in cat_dicts:
         action_vec = []
         state_vec = []
         action_correct = 0
         state_correct =  0
-        state_descriptions = q["grill"]["states"]
-        action_descriptions = q["grill"]["action"]
+        state_descriptions = q[class_word]["states"]
+        action_descriptions = q[class_word]["action"]
         w = 0
         a_total = 0
         s_total = 0
-        for videos in cat_dicts["grill"]:
+        for videos in cat_dicts[class_word]:
             a_total += 1
             s_total += 1
             video_name = videos[0]
             video_annotation = videos[1]
             try:
-                z = process_video(video_name, "grill", w)
+                z = process_video(video_name, class_word, w)
 
                 if z == None:
                     continue
                 else:
                     image_vec, frame_count = z
+                    
             except BreakLoopException:
                 # break_flag = True
                 continue
             # increasing_sets = increasing_sets(frame_count)
             z_max = 0
             true_inices = ()
-            for des in a["juice"]:
+            for des in a[class_word]:
+                # print(des)
                 indices, z = contrained_get_indices(image_vec, s=state_descriptions[des[0]], a=action_descriptions[des[1]])
+                # print(indices, z)
 
-                if z > z_max:
-                    z_max = z
+                if z.item() > z_max:
+                    print(z.item())
+                    z_max = z.item()
                     true_inices = indices
                     
 
@@ -279,7 +285,7 @@ def evaluation():
         category_state_precision = state_correct/ s_total
         # state_vec.append(category_state_precision)
 
-        with open('results.txt', 'w') as f:
+        with open(file, 'w') as f:
             l = 0
             for ac, ss in zip(action_vec, state_vec):
                 f.write("video " + str(l) + " action:" + str(ac) + "\n")
@@ -287,9 +293,9 @@ def evaluation():
                 l +=1
                 
 
-            f.write("grill state:" + str(category_state_precision))
+            f.write(class_word +  " state:" + str(category_state_precision))
             f.write('\n')
-            f.write("grill action:" + str(category_action_precision))
+            f.write(class_word + " action:" + str(category_action_precision))
             f.write('\n')
 
 
@@ -297,30 +303,14 @@ def evaluation():
             
 
 if __name__ == "__main__":
-    evaluation()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-        
-
-
-
-
-
+    x = [["outlet", "outlet_large_results.txt"]]
+    # x = ["pan", "pan_large_results.txt"]
+    for p in x:
+        print(p)
+        evaluation(p[0], p[1])
+    # visualize_indices("-gOU6laeDog", "beer")
+    # print(clip.available_models())
+    # print(device)
 
 
 

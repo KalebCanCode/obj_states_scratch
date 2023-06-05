@@ -1,0 +1,32 @@
+Dough Results
+
+video 0 action:0
+video 0 state:0
+video 1 action:0
+video 1 state:0.5
+video 2 action:1
+video 2 state:0.5
+video 3 action:1
+video 3 state:0.5
+video 4 action:1
+video 4 state:0.5
+video 5 action:1
+video 5 state:0.5
+video 6 action:0
+video 6 state:0.5
+video 7 action:1
+video 7 state:0
+video 8 action:0
+video 8 state:0
+video 9 action:1
+video 9 state:0
+video 10 action:1
+video 10 state:0.5
+video 11 action:0
+video 11 state:0
+video 12 action:0
+video 12 state:0.5
+video 13 action:0
+video 13 state:0.5
+dough state:0.32142857142857145
+dough action:0.5
